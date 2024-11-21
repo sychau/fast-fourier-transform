@@ -1,5 +1,5 @@
 #include "fft_multiThreaded.h"
-
+#include <thread>
 
 void dft_thread_function(const std::vector<double> &X, std::vector<std::complex<double>> &Y, const int start_i, const int end_i, const int n, const std::complex<double> omega) {
     for (int i = start_i; i < end_i; ++i) {
@@ -23,7 +23,7 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 
     const int chunkSize = n / nThreads;
     const int remainder = n % nThreads;
-    std::vector<int> end_boundaries();
+    std::vector<int> end_boundaries;
 
     for (int j =0; j < nThreads; ++j){
         if (j ==0){
@@ -43,3 +43,5 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 
     return Y;
 }
+
+
