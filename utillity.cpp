@@ -1,6 +1,6 @@
 #include "utillity.h"
 
-#define VALIDATE_EPSILON "1e-11"
+#define VALIDATE_EPSILON "1e-12"
 
 
 
@@ -34,4 +34,15 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
     }
 
     return 0;
+}
+
+
+
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&), const char* func_name ,std::vector<double> &X, std::vector<std::complex<double>> &knownGood){
+    std::vector<std::complex<double>> Y = func(X);
+    if (validateFFT(knownGood, Y) == 0) {
+        std::cout<< func_name << " passed\n";
+    } else {
+        std::cout << func_name<< " failed\n";
+    }
 }

@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <numbers>
 
+#define FUNC_NAME(x) x, #x
+
 
 int main(int argc, char* argv[]){
     std::vector<double> samples = sampleSin(8, 1);
@@ -39,11 +41,8 @@ int main(int argc, char* argv[]){
     std::vector<std::complex<double>> naiveResult_multiThreaded = naiveDFT_multiThreaded(samples);
     printVector("naive dft multiThreaded: ", naiveResult_multiThreaded);
 
-    if (validateFFT(fftwResult, naiveResult_multiThreaded) == 0) {
-        std::cout << "naiveDFT_multiThreaded passed\n";
-    } else {
-        std::cout << "naiveDFT_multiThreaded failed\n";
-    }
+    autoValidate(FUNC_NAME(naiveDFT_multiThreaded), samples, fftwResult);
+	autoValidate(FUNC_NAME(naiveDFT), samples, fftwResult);
 
     return 0;
 }

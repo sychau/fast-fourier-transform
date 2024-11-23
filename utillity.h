@@ -27,6 +27,6 @@ std::vector<double> sampleSin(const int N, const double freq);
 // Validate the result of the FFT against a known good
 int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<double>> &Y);
 
-
-
+//Auto validate function
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&), const char* func_name ,std::vector<double> &X, std::vector<std::complex<double>> &knownGood);
 #endif // UTILLITY_H
