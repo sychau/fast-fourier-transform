@@ -1,7 +1,10 @@
 #include "fft_multiThreaded.h"
 #include <thread>
+#include <iostream>
+#include <numbers>
 
 void dft_thread_function(const std::vector<double> &X, std::vector<std::complex<double>> &Y, const int start_i, const int end_i, const int n, const std::complex<double> omega) {
+    
     for (int i = start_i; i < end_i; ++i) {
         for (int j = 0; j < n; ++j) {
             Y[i] += X[j] * std::pow(omega, i * j);

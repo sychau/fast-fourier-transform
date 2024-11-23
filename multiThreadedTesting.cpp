@@ -1,5 +1,6 @@
 #include "utillity.h"
 #include "fft_multiThreaded.h"
+#include "fft_serial.h"
 
 #include <chrono>
 #include <thread>
@@ -11,6 +12,9 @@ int main(int argc, char* argv[]){
     
     std::cout << std::setprecision(3);
     printVector("samples: ", samples);
+
+    std::vector<std::complex<double>> naiveResult = naiveDFT(samples);
+    printVector("naive dft: ", naiveResult);
 
     std::vector<std::complex<double>> naiveResult_multiThreaded = naiveDFT_multiThreaded(samples);
     printVector("naive dft multiThreaded: ", naiveResult_multiThreaded);

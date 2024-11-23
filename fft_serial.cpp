@@ -1,3 +1,6 @@
+#include "fft_serial.h"
+#include "utillity.h"
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -117,18 +120,6 @@ std::vector<std::complex<double>> iterativeFFT(const std::vector<std::complex<do
 	return Y;
 }
 
-// Return sample points of a sin wave
-std::vector<double> sampleSin(const int N, const double freq) {
-    double samplingRate = N;
-
-    std::vector<double> samples(N);    
-    for (int i = 0; i < N; ++i) {
-        double t = i / samplingRate;
-        samples[i] = std::sin(2 * std::numbers::pi * freq * t);
-    }
-    return samples;
-}
-
 // Using fftw library
 std::vector<std::complex<double>> fftwR2c(std::vector<double> &x) {
     int N = x.size();
@@ -157,19 +148,6 @@ std::vector<double> ifftwC2r(std::vector<std::complex<double>> &y) {
     return x;
 }
 
-template<typename T>
-void printVector(std::string_view s, std::vector<T> v) {
-	std::cout << s;
-	for (auto& ele : v) {
-		if constexpr (std::is_same_v<T, std::complex<double>>) {
-            std::cout << ele << " ";
-        } else {
-            std::cout << ele << " ";
-        }
-	}
-	std::cout << "\n";
-}
-
 // fftw exploits symmetry to save spaces, it returns a vector that is half the size of the input
 // This function recover the orignal size
 std::vector<std::complex<double>> expandFftwResult(
@@ -189,6 +167,11 @@ std::vector<std::complex<double>> expandFftwResult(
 
     return fullResult;
 }
+
+
+
+
+/*
 int main() {
     // std::vector<double> samples = sampleSin(8, 1);
 	std::vector<double> samples = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -216,4 +199,4 @@ int main() {
 
 	std::vector<double> ifftwResult = ifftwC2r(fftwResult);
 	printVector("ifftw: ", ifftwResult);
-}
+}*/

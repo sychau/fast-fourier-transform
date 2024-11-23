@@ -23,7 +23,6 @@ void printVector(std::string_view s, std::vector<T> v) {
 	std::cout << "\n";
 }
 
-/*
 // Return sample points of a sin wave
 std::vector<double> sampleSin(const int N, const double freq) {
     double samplingRate = N;
@@ -36,5 +35,5 @@ std::vector<double> sampleSin(const int N, const double freq) {
     return samples;
 }
 
-*/
+
 #endif // UTILLITY_H
