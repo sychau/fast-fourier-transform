@@ -1,8 +1,6 @@
 #ifndef UTILLITY_H
 #define UTILLITY_H
 
-
-
 #include <vector>
 #include <string_view>
 #include <numbers>
@@ -24,16 +22,11 @@ void printVector(std::string_view s, std::vector<T> v) {
 }
 
 // Return sample points of a sin wave
-std::vector<double> sampleSin(const int N, const double freq) {
-    double samplingRate = N;
+std::vector<double> sampleSin(const int N, const double freq);
 
-    std::vector<double> samples(N);    
-    for (int i = 0; i < N; ++i) {
-        double t = i / samplingRate;
-        samples[i] = std::sin(2 * std::numbers::pi * freq * t);
-    }
-    return samples;
-}
+// Validate the result of the FFT against a known good
+int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<double>> &Y);
+
 
 
 #endif // UTILLITY_H

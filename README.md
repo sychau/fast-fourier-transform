@@ -4,7 +4,7 @@ mkdir build
 cd build
 cmake ..
 cmake --build .
-./fft
+./fft_test
 ```
 
 
