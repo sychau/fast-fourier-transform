@@ -46,3 +46,26 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<do
         std::cout << func_name<< " failed\n";
     }
 }
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&, std::complex<double>), const char* func_name ,std::vector<double> &X, std::complex<double> omega, std::vector<std::complex<double>> &knownGood){
+    std::vector<std::complex<double>> Y = func(X, omega);
+    if (validateFFT(knownGood, Y) == 0) {
+        std::cout<< func_name << " passed\n";
+    } else {
+        std::cout << func_name<< " failed\n";
+    }
+}
+
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<std::complex<double>>&, bool), const char* func_name ,std::vector<std::complex<double>> &X, bool inverse, std::vector<std::complex<double>> &knownGood){
+    std::vector<std::complex<double>> Y = func(X, inverse);
+    if (validateFFT(knownGood, Y) == 0) {
+        std::cout<< func_name << " passed\n";
+    } else {
+        std::cout << func_name<< " failed\n";
+    }
+}
+
+
+std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b){
+    // Return {a + b, a - b}
+    return {a + b, a - b};
+}

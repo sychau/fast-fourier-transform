@@ -29,4 +29,16 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
 
 //Auto validate function
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&), const char* func_name ,std::vector<double> &X, std::vector<std::complex<double>> &knownGood);
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&, std::complex<double>), const char* func_name ,std::vector<double> &X, std::complex<double> omega,  std::vector<std::complex<double>> &knownGood);
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<std::complex<double>>&, bool), const char* func_name ,std::vector<std::complex<double>> &X, bool inverse,  std::vector<std::complex<double>> &knownGood);
+
+
+
+
+
+std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b);
+
+
+
+
 #endif // UTILLITY_H
