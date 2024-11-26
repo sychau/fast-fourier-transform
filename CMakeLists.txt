@@ -8,12 +8,21 @@ project(cmpt431_fft VERSION 1.0)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Use mpic++ wrapper
+set(MPI_COMPILER mpic++)
+
 # Set to how close two complex numbers must be to be considered equal
 set(VALIDATE_EPSILON 1e-12)
 configure_file(utillity.cpp.in ../utillity.cpp)
 
+# Find MPI (ensures that MPI is configured correctly)
+find_package(MPI REQUIRED)
+
 # Add source files
 add_executable(fft_test testing.cpp fft_serial.cpp fft_multiThreaded.cpp utillity.cpp)
+add_executable(fft_test_distributed testing_distributed.cpp fft_distributed.cpp fft_serial.cpp utillity.cpp)
 
 # Link the FFTW library
 target_link_libraries(fft_test fftw3)
+target_link_libraries(fft_test_distributed fftw3)
+target_link_libraries(fft_test_distributed MPI::MPI_CXX)
