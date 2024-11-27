@@ -9,11 +9,6 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
     MPI_Comm_size(MPI_COMM_WORLD, &processes);  // Total number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &currProcId);  // Current process ID
 
-    if (!isPowerOfTwo(X.size()) || !isPowerOfTwo(processes) || X.size() < processes) {
-        std::cout << "Incorrect input size or number of processes\n";
-        return {};
-    }
-
 	const int n = X.size();
 	const int r = std::log2(n);
     const int logP = std::log2(processes);

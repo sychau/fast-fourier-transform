@@ -1,7 +1,7 @@
 #include "utillity.h"
 #include "fft_multiThreaded.h"
 #include "fft_serial.h"
-
+#include "core/get_time.h"
 #include <chrono>
 #include <thread>
 #include <iomanip>
@@ -37,8 +37,12 @@ int main(int argc, char* argv[]){
 	std::vector<double> ifftwResult = ifftwC2r(fftwResult);
 	printVector("ifftw: ", ifftwResult);
 
+	timer fftTimer;
+	fftTimer.start();
 	std::vector<std::complex<double>> iterativeFftIcpResult = iterativeIcpFft(complexSamples, false);
+	double fftTime = fftTimer.stop();
 	printVector("iterative icp fft: ", iterativeFftIcpResult);
+	std::cout << std::format("Time taken(icp fft): {}\n", fftTime);
 
 	std::vector<std::complex<double>> iterativeIfftIcpResult = iterativeIcpFft(iterativeFftIcpResult, true);
 	printVector("iterative icp ifft: ", iterativeIfftIcpResult);

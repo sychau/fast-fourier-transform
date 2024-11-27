@@ -25,6 +25,8 @@ sudo apt install libfftw3-dev
 If vscode shows warnings, add "/usr/include" to includePath in c_cpp_properties.json
 Add openMPI to includePath "/usr/lib/x86_64-linux-gnu/openmpi/**"
 
+As array size increase, error will increase, at around 2^20 it will exceed the EPSILON 1e-4
+
 Resource:
 IPC Ch.13
 https://learning.oreilly.com/library/view/introduction-to-parallel/0201648652/

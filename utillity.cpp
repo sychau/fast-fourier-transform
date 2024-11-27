@@ -27,8 +27,9 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
 
     // Compare each element
     for (int i = 0; i < X.size(); ++i) {
-        if (std::abs(X[i].real() - Y[i].real()) > 1e-6 || 
-            std::abs(X[i].imag() - Y[i].imag()) > 1e-6) {
+        if (std::abs(X[i].real() - Y[i].real()) > 1e-4 || 
+            std::abs(X[i].imag() - Y[i].imag()) > 1e-4) {
+            std::cout <<  "X:" << X[i] << " Y: " << Y[i] << "\n";
             std::cout << "Difference of " << std::abs(X[i] - Y[i]) << " at index " << i << "\n";
             return 1;
         }
@@ -69,4 +70,15 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
 std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b){
     // Return {a + b, a - b}
     return {a + b, a - b};
+}
+
+std::vector<double> generateRandomVector(size_t size, double min, double max, unsigned int seed) {
+    std::vector<double> result(size);
+    std::mt19937 gen(seed); // Initialize generator with a seed
+    std::uniform_real_distribution<double> dis(min, max);
+
+    for (double& val : result) {
+        val = dis(gen);
+    }
+    return result;
 }

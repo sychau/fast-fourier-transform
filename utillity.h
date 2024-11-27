@@ -7,6 +7,8 @@
 #include <cmath>
 #include <iostream>
 #include <complex>
+#include <random>
+#include <format>
 
 template<typename T>
 void printVector(std::string_view s, std::vector<T> v) {
@@ -38,7 +40,6 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
 
 std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b);
 
-
-
+std::vector<double> generateRandomVector(size_t size, double min, double max, unsigned int seed);
 
 #endif // UTILLITY_H
