@@ -31,10 +31,10 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
     std::vector<std::complex<double>> S(n); // Auxillary array to hold previous value of R
     std::copy(R.begin() + startIdx, R.begin() + endIdx, S.begin() + startIdx);
 
-	// Outer loop O(log n)
+	// Outer loop O(log n), m represent stage
     for (int m = 0; m < r; ++m) {
         // CHeck if data exchange is needed before calculation
-        if (m < (r - logP)) {
+        if (m < (logP)) {
             std::bitset<32> partnerProcIdBits(currProcId);
             partnerProcIdBits.flip(logP - m - 1);
             int partnerProcId = partnerProcIdBits.to_ulong();
