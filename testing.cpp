@@ -9,7 +9,6 @@
 
 #define FUNC_NAME(x) x, #x
 
-
 int main(int argc, char* argv[]){
     std::vector<double> samples = sampleSin(8, 1);
     // std::vector<double> samples = {1, 2, 3, 4, 5, 6, 7, 8};
@@ -38,11 +37,16 @@ int main(int argc, char* argv[]){
 	std::vector<double> ifftwResult = ifftwC2r(fftwResult);
 	printVector("ifftw: ", ifftwResult);
 
+	std::vector<std::complex<double>> iterativeFftIcpResult = iterativeIcpFft(complexSamples, false);
+	printVector("iterative icp fft: ", iterativeFftIcpResult);
+
+	std::vector<std::complex<double>> iterativeIfftIcpResult = iterativeIcpFft(iterativeFftIcpResult, true);
+	printVector("iterative icp ifft: ", iterativeIfftIcpResult);
+
     std::vector<std::complex<double>> naiveResult_multiThreaded = naiveDFT_multiThreaded(samples);
     printVector("naive dft multiThreaded: ", naiveResult_multiThreaded);
 
     autoValidate(FUNC_NAME(naiveDFT_multiThreaded), samples, fftwResult);
 	autoValidate(FUNC_NAME(naiveDFT), samples, fftwResult);
-
     return 0;
 }

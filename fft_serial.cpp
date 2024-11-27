@@ -9,7 +9,7 @@
 #include <string>
 #include <bitset>
 #include <iomanip>
-
+#include <format>
 #include <fftw3.h>
 
 // IPC Ch.13
@@ -118,6 +118,67 @@ std::vector<std::complex<double>> iterativeFFT(const std::vector<std::complex<do
     }
 
 	return Y;
+}
+
+// This iterative version is from ICP, it is easier to decompose tasks to different threads/ processes
+std::vector<std::complex<double>> iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse) {
+	const int n = X.size();
+	const int r = std::log2(n);
+
+	const std::complex<double> img(0.0, 1.0);
+	double exponentSign = isInverse ? 1.0 : -1.0;
+	std::complex<double> omega = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
+
+	// Reverse bits of num
+	auto reverseBits = [](unsigned int num, int len) {
+        unsigned int reversed = 0;
+        for (int i = 0; i < len; ++i) {
+            unsigned int bit = (num >> i) & 1;
+            reversed = (reversed << 1) | bit;
+        }
+        return reversed;
+    };
+
+	// Extract the first N bits
+   	auto getFirstNBits = [](unsigned int num, int n) {
+        unsigned int mask = (1U << n) - 1;
+        return num & mask;  
+	};
+
+	std::vector<std::complex<double>> R(X); // Result array
+    std::vector<std::complex<double>> S(n);// Auxillary array to hold previous value of R
+
+	// Outer loop O(log n)
+    for (int m = 0; m < r; ++m) {
+        std::copy(R.begin(), R.end(), S.begin());
+		// Inner loop O(n)
+		for (int i = 0; i < n; ++i) {
+			// Let (b_0 b_1 ... b_r-1) be the binary representation of i 
+			std::bitset<32> j(i);
+			j.reset(r - 1 - m); // (b_0 ... b_m−1 0 b_m+1 ... b_r−1)
+			std::bitset<32> k(i); 
+			k.set(r - 1 - m); // (b_0 ... b_m−1 1 b_m+1 ... b_r−1)
+
+			unsigned int omegaExp = getFirstNBits(reverseBits(i, r), m + 1) << (r - 1 - m); // (b_m b_m-1 ... b-0 ... 0 ... 0)
+			R[i] = S[j.to_ulong()] + S[k.to_ulong()] * std::pow(omega, omegaExp);
+		}
+    }
+    // In-place bit-reversal reordering
+    for (int i = 0; i < n; ++i) {
+        int reversedIndex = reverseBits(i, r);
+        if (i < reversedIndex) {
+            std::swap(R[i], R[reversedIndex]);
+        }
+    }
+
+	// Normalize result if performing IFFT
+    if (isInverse) {
+        for (int i = 0; i < n; ++i) {
+            R[i] /= n;
+        }
+    }
+
+    return R;
 }
 
 // Using fftw library

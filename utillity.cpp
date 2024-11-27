@@ -27,7 +27,8 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
 
     // Compare each element
     for (int i = 0; i < X.size(); ++i) {
-        if (X[i] != Y[i] && std::abs(X[i] - Y[i]) > 1e-6) {
+        if (std::abs(X[i].real() - Y[i].real()) > 1e-6 || 
+            std::abs(X[i].imag() - Y[i].imag()) > 1e-6) {
             std::cout << "Difference of " << std::abs(X[i] - Y[i]) << " at index " << i << "\n";
             return 1;
         }
