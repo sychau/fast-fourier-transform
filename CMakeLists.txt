@@ -10,10 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Use mpic++ wrapper
 set(MPI_COMPILER mpic++)
-
-# Set to how close two complex numbers must be to be considered equal
-set(VALIDATE_EPSILON 1e-12)
-configure_file(utillity.cpp.in ../utillity.cpp)
+set(CMAKE_CXX_FLAGS "-O3")
 
 # Find MPI (ensures that MPI is configured correctly)
 find_package(MPI REQUIRED)

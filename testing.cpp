@@ -39,13 +39,15 @@ int main(int argc, char* argv[]){
 
 	timer fftTimer;
 	fftTimer.start();
-	std::vector<std::complex<double>> iterativeFftIcpResult = iterativeIcpFft(complexSamples, false);
+	std::vector<double> bigSamples = generateRandomVector(1 << 20, 0.0, 10.0, 49);
+	std::vector<std::complex<double>> complexBigSamples(bigSamples.begin(), bigSamples.end());
+	std::vector<std::complex<double>> iterativeFftIcpResult = iterativeFFT(complexBigSamples, false);
 	double fftTime = fftTimer.stop();
-	printVector("iterative icp fft: ", iterativeFftIcpResult);
-	std::cout << std::format("Time taken(icp fft): {}\n", fftTime);
+	// printVector("iterative icp fft: ", iterativeFftIcpResult);
+	std::cout << std::format("Time taken(icp fft) ms: {}\n", fftTime*1000);
 
 	std::vector<std::complex<double>> iterativeIfftIcpResult = iterativeIcpFft(iterativeFftIcpResult, true);
-	printVector("iterative icp ifft: ", iterativeIfftIcpResult);
+	// printVector("iterative icp ifft: ", iterativeIfftIcpResult);
 
     std::vector<std::complex<double>> naiveResult_multiThreaded = naiveDFT_multiThreaded(samples);
     printVector("naive dft multiThreaded: ", naiveResult_multiThreaded);
