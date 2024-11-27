@@ -12,9 +12,9 @@ Run single process test
 ```
 
 Run distributed test
-You can choose any number of processes that is power of 2
+Input number of processes, array size exponent(power of 2) and random seed
 ```
-mpirun -n 4 ./fft_test_distributed
+mpirun -n 8 ./fft_test_distributed --sizeExp 16 --seed 49
 ```
 
 Install fftw3
@@ -25,7 +25,7 @@ sudo apt install libfftw3-dev
 If vscode shows warnings, add "/usr/include" to includePath in c_cpp_properties.json
 Add openMPI to includePath "/usr/lib/x86_64-linux-gnu/openmpi/**"
 
-As array size increase, error will increase, at around 2^20 it will exceed the EPSILON 1e-4
+If you run very large array (> 2^21), the result will start to differ from fftw as error add up
 
 Resource:
 IPC Ch.13
