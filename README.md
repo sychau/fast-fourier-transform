@@ -33,3 +33,6 @@ https://learning.oreilly.com/library/view/introduction-to-parallel/0201648652/
 
 Cooley–Tukey FFT algorithm
 https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
+
+Construction of a High-Performance FFT 
+https://edp.org/work/Construction.pdf
