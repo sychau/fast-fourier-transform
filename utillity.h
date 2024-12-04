@@ -9,6 +9,7 @@
 #include <complex>
 #include <random>
 #include <format>
+#include <bitset>
 
 template<typename T>
 void printVector(std::string_view s, std::vector<T> v) {
@@ -41,5 +42,14 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
 std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b);
 
 std::vector<double> generateRandomVector(size_t size, double min, double max, unsigned int seed);
+
+// Check if a number is power of 2
+bool isPowerOfTwo(unsigned int i);
+
+// Reverse bits of num
+unsigned int reverseBits (unsigned int num, unsigned int len);
+
+// Extract the first N bits
+unsigned int getFirstNBits (unsigned int num, int n);
 
 #endif // UTILLITY_H

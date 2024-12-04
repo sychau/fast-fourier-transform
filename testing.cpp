@@ -41,7 +41,7 @@ int main(int argc, char* argv[]){
 	fftTimer.start();
 	std::vector<double> bigSamples = generateRandomVector(1 << 20, 0.0, 10.0, 49);
 	std::vector<std::complex<double>> complexBigSamples(bigSamples.begin(), bigSamples.end());
-	std::vector<std::complex<double>> iterativeFftIcpResult = iterativeFFT(complexBigSamples, false);
+	std::vector<std::complex<double>> iterativeFftIcpResult = iterativeIcpFft(complexBigSamples, false);
 	double fftTime = fftTimer.stop();
 	// printVector("iterative icp fft: ", iterativeFftIcpResult);
 	std::cout << std::format("Time taken(icp fft) ms: {}\n", fftTime*1000);
