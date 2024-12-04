@@ -63,38 +63,18 @@ std::vector<std::complex<double>> recursiveFFT(const std::vector<double> &X, std
 // Input must be length of power of 2, complex number
 std::vector<std::complex<double>> iterativeFFT(const std::vector<std::complex<double>> &X, bool isInverse) {
 	const int n = X.size();
-	const int nBitsLen = std::log2(n); // number of bits to represent n
+	const int r = std::log2(n); // number of bits to represent n
 
 	double exponentSign = isInverse ? 1.0 : -1.0;
 	const std::complex<double> img(0.0, 1.0);
 
-	 
-	// Reorder the input vector using bit reversal
-	auto bitReverseCopy = [](const std::vector<std::complex<double>> A) {
-		const int n = A.size();
-		const int nBitsLen = std::log2(n); // number of bits to represent n
-		std::vector<std::complex<double>> R(n);
+	// Use bit reversal order
+	std::vector<std::complex<double>> Y(n);
+	for (int i = 0; i < n; ++i) {
+		Y[reverseBits(i, r)] = X[i];
+	}
 
-		// Reverse the bits of k, for example 01001 will become 10010
-		auto rev = [] (int k, int bits) {
-			int reversed_index = 0;
-			for (int i = 0; i < bits; ++i) {
-				if (k & (1 << i)) {
-					reversed_index |= (1 << (bits - 1 - i));
-				}
-			}
-			return reversed_index;
-		};
-
-		for (int i = 0; i < n; ++i) {
-			R[rev(i, nBitsLen)] = A[i];
-		}
-		return R;
-	};
-
-	std::vector<std::complex<double>> Y = bitReverseCopy(X);
-
-	for (int s = 1; s <= nBitsLen; ++s) {
+	for (int s = 1; s <= r; ++s) {
 		int m = 1 << s;
 		std::complex<double> omegaM = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)m);
 
@@ -110,14 +90,13 @@ std::vector<std::complex<double>> iterativeFFT(const std::vector<std::complex<do
 			}
 		}
 	}
-
 	// Normalize result if performing IFFT
     if (isInverse) {
         for (int i = 0; i < n; ++i) {
             Y[i] /= n;
         }
     }
-
+	
 	return Y;
 }
 
