@@ -33,7 +33,7 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&), const char* func_name ,std::vector<double> &X, std::vector<std::complex<double>> &knownGood);
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&, std::complex<double>), const char* func_name ,std::vector<double> &X, std::complex<double> omega,  std::vector<std::complex<double>> &knownGood);
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<std::complex<double>>&, bool), const char* func_name ,std::vector<std::complex<double>> &X, bool inverse,  std::vector<std::complex<double>> &knownGood);
-
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<std::complex<double>>&, std::complex<double>), const char* func_name ,std::vector<std::complex<double>> &X, std::complex<double> omega, std::vector<std::complex<double>> &knownGood);
 
 
 
@@ -41,5 +41,12 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
 std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b);
 
 std::vector<double> generateRandomVector(size_t size, double min, double max, unsigned int seed);
+
+
+
+unsigned int reverseBits(unsigned int num, int len);
+
+
+unsigned int getFirstNBits(unsigned int num, int n);
 
 #endif // UTILLITY_H

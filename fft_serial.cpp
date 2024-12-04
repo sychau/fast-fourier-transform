@@ -193,6 +193,7 @@ std::vector<std::complex<double>> fftwR2c(std::vector<double> &x) {
 }
 
 std::vector<double> ifftwC2r(std::vector<std::complex<double>> &y) {
+	// The input gets changed sometimes.
 	int N = y.size();
     std::vector<double> x(N);
     fftw_plan p = fftw_plan_dft_c2r_1d(N, reinterpret_cast<fftw_complex*>(y.data()),

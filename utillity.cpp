@@ -65,6 +65,15 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
         std::cout << func_name<< " failed\n";
     }
 }
+void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<std::complex<double>>&, std::complex<double>), const char* func_name ,std::vector<std::complex<double>> &X, std::complex<double> omega, std::vector<std::complex<double>> &knownGood){
+    std::vector<std::complex<double>> Y = func(X, omega);
+    if (validateFFT(knownGood, Y) == 0) {
+        std::cout<< func_name << " passed\n";
+    } else {
+        std::cout << func_name<< " failed\n";
+    }
+}
+
 
 
 std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b){
@@ -82,3 +91,27 @@ std::vector<double> generateRandomVector(size_t size, double min, double max, un
     }
     return result;
 }
+
+
+
+
+
+
+unsigned int reverseBits(unsigned int num, int len) {
+    // Reverse bits of num
+	unsigned int reversed = 0;
+	for (int i = 0; i < len; ++i) {
+		unsigned int bit = (num >> i) & 1;
+		reversed = (reversed << 1) | bit;
+	}
+	return reversed;
+};
+
+
+
+
+unsigned int getFirstNBits(unsigned int num, int n) {
+    // Extract the first N bits
+	unsigned int mask = (1U << n) - 1;
+	return num & mask;  
+};
