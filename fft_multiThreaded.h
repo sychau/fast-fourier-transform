@@ -11,8 +11,8 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 
 
 
-void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n, std::vector<std::complex<double>> &R, std::vector<std::complex<double>> &S, const std::complex<double> omega, std::barrier<> &b, int thread_id);
-std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads);
+void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n, std::vector<std::complex<double>> &R, std::vector<std::complex<double>> &S, const std::complex<double> omega, std::barrier<> &b, int thread_id, int block_size =1);
+std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads, int block_size=1);
 
 
 
