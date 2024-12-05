@@ -53,6 +53,35 @@ Test the distributed implementation using MPI. Specify the number of processes w
 mpirun -n 8 ./test_distributed --sizeExp 20 --seed 49
 ```
 
+### Requirements for creating plots
+Matplotlib must be installed to be able to create plots. This can be done with: 
+'''>>>pip3 install matplotlib'''
+
+### Create Parallel Plots
+To begin we can first navigate to the plotting directory from the build directory like so: 
+'''cd ../plotting'''
+From there we can gather all of the necessary data as follows: 
+'''python3 get_data_parallel.py'''
+Afterwhich we can generate plots by running the plot constructing scripts and selecting parallel plots as follows: 
+'''
+>>>python3 construct_plots.py
+Enter 1 for parallel plots, 2 for distributed plots: 1
+'''
+After which there should be the parallel plots in the actual_plots folder. 
+
+### Create Distributed Plots
+To begin we can first navigate to the plotting directory from the build directory like so: 
+'''cd ../plotting'''
+From there we can gather all of the necessary data as follows: 
+'''python3 get_data_distributed.py'''
+Afterwhich we can generate plots by running the plot constructing scripts and selecting parallel plots as follows: 
+'''
+>>>python3 construct_plots.py
+Enter 1 for parallel plots, 2 for distributed plots: 2
+'''
+After which there should be the distributed plots in the actual_plots folder. 
+
+
 ## Note
 ### Include Path Configuration in VSCode
 If you see warnings in VSCode, add the following paths to your c_cpp_properties.json:
