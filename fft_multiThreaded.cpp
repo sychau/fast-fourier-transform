@@ -1,6 +1,7 @@
 #include "fft_multiThreaded.h"
 #include "utillity.h"
 #include <atomic>
+#include <barrier>
 #include <bitset>
 #include <iostream>
 #include <numbers>
@@ -51,7 +52,7 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 
 std::atomic<int> iterativeIcpFft_covered_i(0);
 void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n, std::vector<std::complex<double>> &R,
-                                                        std::vector<std::complex<double>> &S, const std::complex<double> omega, CustomBarrier &b, int thread_id, int block_size) {
+                                                        std::vector<std::complex<double>> &S, const std::complex<double> omega, std::barrier<> &b, int thread_id, int block_size) {
 
     int start_i;
     int m;
@@ -80,7 +81,7 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
 
 
         t1 = std::chrono::high_resolution_clock::now();
-        b.wait();
+        b.arrive_and_wait();
         t2 = std::chrono::high_resolution_clock::now();
         barrier1_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
@@ -108,7 +109,7 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
 
 
         t1 = std::chrono::high_resolution_clock::now();
-        b.wait();
+        b.arrive_and_wait();
         t2 = std::chrono::high_resolution_clock::now();
         barrier2_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     }
@@ -123,7 +124,7 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
 std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads, int block_size) {
     const int n = X.size();
     const int r = std::log2(n);
-    CustomBarrier b(nThreads);
+    std::barrier b(nThreads);
 
     const std::complex<double> img(0.0, 1.0);
     double exponentSign = isInverse ? 1.0 : -1.0;
