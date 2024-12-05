@@ -7,11 +7,7 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
-
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-
+#include <numbers>
 
 #define DEFAULT_ARRAY_SIZE_EXP "4"
 #define DEFAULT_SEED "0"
@@ -55,7 +51,7 @@ int main(int argc, char* argv[]){
 
 	t1 = std::chrono::high_resolution_clock::now();
     const std::complex<double> img(0.0, 1.0);
-	std::complex<double> omega = std::exp(-2.0 * img * M_PI / (double)arraySize);
+	std::complex<double> omega = std::exp(-2.0 * img * std::numbers::pi / (double)arraySize);
 	std::vector<std::complex<double>> recursiveResult = recursiveFFT(samples, omega);
 	t2 = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();

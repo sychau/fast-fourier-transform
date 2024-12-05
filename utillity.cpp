@@ -1,14 +1,6 @@
 #include "utillity.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-
-
 #define VALIDATE_EPSILON "1e-12"
-
-
-
 
 
 std::vector<double> sampleSin(const int N, const double freq) {
@@ -17,7 +9,7 @@ std::vector<double> sampleSin(const int N, const double freq) {
     std::vector<double> samples(N);    
     for (int i = 0; i < N; ++i) {
         double t = i / samplingRate;
-        samples[i] = std::sin(2 * M_PI * freq * t);
+        samples[i] = std::sin(2 * std::numbers::pi * freq * t);
     }
     return samples;
 }
