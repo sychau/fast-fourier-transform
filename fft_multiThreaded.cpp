@@ -116,9 +116,9 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
     //std::cout << "Thread " << thread_id << " barrier1_time: " << barrier1_time << " microseconds\n";
     //std::cout << "Thread " << thread_id << " barrier2_time: " << barrier2_time << " microseconds\n";
     //std::cout << "Thread " << thread_id << " inner_loop: " << inner_loop << " microseconds\n";
-    if (thread_id == 0) {
-        std::cout << "Thread 0 stuff: " << thread_0_stuff << " microseconds\n";
-    }
+    // if (thread_id == 0) {
+    //     std::cout << "Thread 0 stuff: " << thread_0_stuff << " microseconds\n";
+    // }
 }
 
 std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads, int block_size) {

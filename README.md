@@ -6,9 +6,9 @@ This project provides serial, parallel, and distributed implementations of the F
 
 The following dependencies are required to build and run the project:  
 - **openMPI**  
-- **cmake**  
+- **cmake ver3.20**  
 - **make**  
-- **g++**  
+- **g++10**  
 - **fftw3** (used to verify the results of our algorithm)  
 
 ### Installing fftw3 on Ubuntu  
