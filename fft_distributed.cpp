@@ -8,6 +8,8 @@
 // Precondition: size of X and number of processes are power of 2, size of X >= number of processes
 // The input X may contain partial or full input array
 std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::complex<double>> &X, bool isInverse) {
+    
+    
     int processes, currProcId;
     MPI_Comm_size(MPI_COMM_WORLD, &processes);  // Total number of processes
     MPI_Comm_rank(MPI_COMM_WORLD, &currProcId);  // Current process ID
