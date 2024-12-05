@@ -16,10 +16,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 find_package(MPI REQUIRED)
 
 # Add source files
-add_executable(fft_test testing.cpp fft_serial.cpp fft_multiThreaded.cpp utillity.cpp)
-add_executable(fft_test_distributed testing_distributed.cpp fft_distributed.cpp fft_serial.cpp utillity.cpp)
+add_executable(test_serial test_serial.cpp fft_serial.cpp utillity.cpp)
+add_executable(test_parallel test_parallel.cpp fft_multiThreaded.cpp fft_serial.cpp utillity.cpp)
+add_executable(test_distributed test_distributed.cpp fft_distributed.cpp fft_serial.cpp utillity.cpp)
 
 # Link the FFTW library
-target_link_libraries(fft_test fftw3)
-target_link_libraries(fft_test_distributed fftw3)
-target_link_libraries(fft_test_distributed MPI::MPI_CXX)
+target_link_libraries(test_serial fftw3)
+target_link_libraries(test_parallel fftw3)
+target_link_libraries(test_distributed fftw3)
+target_link_libraries(test_distributed MPI::MPI_CXX)

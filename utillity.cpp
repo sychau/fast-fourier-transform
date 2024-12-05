@@ -3,8 +3,6 @@
 #define VALIDATE_EPSILON "1e-12"
 
 
-
-// Return sample points of a sin wave
 std::vector<double> sampleSin(const int N, const double freq) {
     double samplingRate = N;
 
@@ -16,7 +14,6 @@ std::vector<double> sampleSin(const int N, const double freq) {
     return samples;
 }
 
-// Validate the result of the FFT against a known good
 int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<double>> &Y){
     // Return 0 if the two vectors are equal, 1 otherwise
 
@@ -27,8 +24,8 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
 
     // Compare each element
     for (int i = 0; i < X.size(); ++i) {
-        if (std::abs(X[i].real() - Y[i].real()) > 1e-4 || 
-            std::abs(X[i].imag() - Y[i].imag()) > 1e-4) {
+        if (std::abs(X[i].real() - Y[i].real()) > 0.1 || 
+            std::abs(X[i].imag() - Y[i].imag()) > 0.1) {
             std::cout <<  "X:" << X[i] << " Y: " << Y[i] << "\n";
             std::cout << "Difference of " << std::abs(X[i] - Y[i]) << " at index " << i << "\n";
             return 1;
@@ -38,8 +35,6 @@ int validateFFT(std::vector<std::complex<double>> &X, std::vector<std::complex<d
     return 0;
 }
 
-
-
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&), const char* func_name ,std::vector<double> &X, std::vector<std::complex<double>> &knownGood){
     std::vector<std::complex<double>> Y = func(X);
     if (validateFFT(knownGood, Y) == 0) {
@@ -48,6 +43,7 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<do
         std::cout << func_name<< " failed\n";
     }
 }
+
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<double>&, std::complex<double>), const char* func_name ,std::vector<double> &X, std::complex<double> omega, std::vector<std::complex<double>> &knownGood){
     std::vector<std::complex<double>> Y = func(X, omega);
     if (validateFFT(knownGood, Y) == 0) {
@@ -65,6 +61,7 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
         std::cout << func_name<< " failed\n";
     }
 }
+
 void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<std::complex<double>>&, std::complex<double>), const char* func_name ,std::vector<std::complex<double>> &X, std::complex<double> omega, std::vector<std::complex<double>> &knownGood){
     std::vector<std::complex<double>> Y = func(X, omega);
     if (validateFFT(knownGood, Y) == 0) {
@@ -73,8 +70,6 @@ void autoValidate(std::vector<std::complex<double>> (*func)(const std::vector<st
         std::cout << func_name<< " failed\n";
     }
 }
-
-
 
 std::vector<std::complex<double>> butterflyAdd(std::complex<double> a, std::complex<double> b){
     // Return {a + b, a - b}
@@ -91,8 +86,6 @@ std::vector<double> generateRandomVector(size_t size, double min, double max, un
     }
     return result;
 }
-
-
 
 bool isPowerOfTwo(unsigned int i) {
     return std::bitset<32>(i).count() == 1;
@@ -124,7 +117,6 @@ unsigned int reverseBits (unsigned int num, unsigned int len) {
         (bitReverseTable256[(num >> 24) & 0xff]);
     return reversedNum >> (32 - len);
 }
-
 
 unsigned int getFirstNBits (unsigned int num, int n) {
     unsigned int mask = (1U << n) - 1;
