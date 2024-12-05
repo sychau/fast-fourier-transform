@@ -103,8 +103,6 @@ def create_parallel_plots():
         plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{threads}.png")
         plt.close()
 
-        
-
 
 def compute_means_distributed():
     with open("distributed.json", "r") as f:
@@ -164,7 +162,7 @@ def create_distributed_plots():
             list(map(float, means.keys())),
             [
                 means[exp]["iterativeIcp"][str(1)]
-                / means[exp]["iterativeIcp"][str(processes)]
+                / means[exp]["iterativeIcpDistributed"][str(processes)]
                 for exp in means.keys()
             ],
             ".-",
@@ -179,4 +177,12 @@ def create_distributed_plots():
 
 
 if __name__ == "__main__":
-    create_parallel_plots()
+    x = input("Enter 1 for parallel plots, 2 for distributed plots: ")
+    while x != "1" and x != "2":
+        print("Invalid input")
+        x = input("Enter 1 for parallel plots, 2 for distributed plots: ")
+
+    if x == "1":
+        create_parallel_plots()
+    else:
+        create_distributed_plots()

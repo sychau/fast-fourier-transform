@@ -2,5 +2,3 @@
 build/
 *.out
 fftw-*/
-plotting/*.json
-plotting/**/*.png
