@@ -30,8 +30,8 @@ int main(int argc, char* argv[]){
     uint seed = cl_options["seed"].as<uint>();
 
     // Print information
-	std::cout << "Array size: " <<  arraySize << std::endl;
-	std::cout << "Seed: " << seed << std::endl;
+	std::cout << std::format("Array size: {}\n", arraySize);
+	std::cout << std::format("Seed: {}\n", seed);
 	std::cout << "\n";
 
 	if (!isPowerOfTwo(arraySize)) {
