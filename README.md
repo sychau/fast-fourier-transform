@@ -53,6 +53,10 @@ Test the distributed implementation using MPI. Specify the number of processes w
 mpirun -n 8 ./test_distributed --sizeExp 20 --seed 49
 ```
 
+
+## Plotting
+
+
 ### Requirements for creating plots
 Matplotlib must be installed to be able to create plots. This can be done with: 
 ```bash
