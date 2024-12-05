@@ -9,6 +9,9 @@ SEEDS = ["324234", "234234", "66756"]
 
 # {EXP { SEED {ALGO {THREADS [time]}}}}
 JSON_FILE = "parallel.json"
+if (not os.path.exists(JSON_FILE)):
+    with open(JSON_FILE, "w") as f:
+        json.dump({}, f, indent=4)
 complete_data = json.load(open(JSON_FILE, "r"))
 
 TEMPLATE_SCRIPT = (
