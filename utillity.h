@@ -7,7 +7,6 @@
 #include <iostream>
 #include <complex>
 #include <random>
-#include <format>
 #include <bitset>
 
 // Return sample points of a sin wave
