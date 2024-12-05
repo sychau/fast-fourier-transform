@@ -56,15 +56,16 @@ def decode_output_and_save(output):
     if seed not in complete_data[size]:
         complete_data[size][seed] = {}
     if "fftw" not in complete_data[size][seed]:
-        complete_data[size][seed]["fftw"] = []
-
+        complete_data[size][seed]["fftw"] = {}
     if "iterativeIcp" not in complete_data[size][seed]:
         complete_data[size][seed]["iterativeIcp"] = {}
+    if threads not in complete_data[size][seed]["fftw"]:
+        complete_data[size][seed]["fftw"][threads] = []
     if threads not in complete_data[size][seed]["iterativeIcp"]:
         complete_data[size][seed]["iterativeIcp"][threads] = []
 
     # Save the data
-    complete_data[size][seed]["fftw"].append(fftw_time)
+    complete_data[size][seed]["fftw"][threads].append(fftw_time)
     complete_data[size][seed]["iterativeIcp"][threads].append(iterativeIcp_time)
 
     # Save the data to the json file incase of failure later we still have the data until this point
@@ -77,12 +78,12 @@ def main(total_reapeated_tests=5):
     json file and runs each version total_reapeated_tests times to be able to take the mean.
     """
     for run in range(total_reapeated_tests):
-        for threads in range(1, 9):
-            for exp_size in range(10, 24):
+        for threads in range(1, 9):  # TODO: change to go from 1 to 16
+            for exp_size in range(4, 24):
                 for seed in SEEDS:
                     output = run_test(exp_size, seed, threads)
                     decode_output_and_save(output)
 
 
 if __name__ == "__main__":
-    main(1)
+    main(3)
