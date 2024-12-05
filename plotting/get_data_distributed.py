@@ -36,8 +36,8 @@ def decode_output_and_save(output):
     seed = str(int(lines[2].split(": ")[1]))
 
     # get the run times for each of the algorithms
-    iterativeIcp_time = str(lines[5].split(": ")[1].split(" ")[0])
-    iterativeIcp_time = str(lines[5].split(": ")[1].split(" ")[0])
+    iterativeIcp_time = str(lines[4].split(": ")[1].split(" ")[0])
+    iterativeIcpDistributed_time = str(lines[5].split(": ")[1].split(" ")[0])
     
 
     # read the rest of the data and check if any of the autovalidates failed
@@ -56,17 +56,18 @@ def decode_output_and_save(output):
         complete_data[size] = {}
     if seed not in complete_data[size]:
         complete_data[size][seed] = {}
-    if "fftw" not in complete_data[size][seed]:
-        complete_data[size][seed]["fftw"] = []
-
     if "iterativeIcp" not in complete_data[size][seed]:
         complete_data[size][seed]["iterativeIcp"] = {}
     if threads not in complete_data[size][seed]["iterativeIcp"]:
         complete_data[size][seed]["iterativeIcp"][threads] = []
+    if "iterativeIcpDistributed" not in complete_data[size][seed]:
+        complete_data[size][seed]["iterativeIcpDistributed"] = {}
+    if threads not in complete_data[size][seed]["iterativeIcpDistributed"]:
+        complete_data[size][seed]["iterativeIcpDistributed"][threads] = []
 
     # Save the data
-    complete_data[size][seed]["fftw"].append(fftw_time)
     complete_data[size][seed]["iterativeIcp"][threads].append(iterativeIcp_time)
+    complete_data[size][seed]["iterativeIcpDistributed"][threads].append(iterativeIcpDistributed_time)
 
     # Save the data to the json file incase of failure later we still have the data until this point
     with open(JSON_FILE, "w") as f:
