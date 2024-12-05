@@ -4,7 +4,7 @@ import json
 import math
 
 
-SEEDS = ["324234", "234234", "66756", "85946", "87543095", "239576", "59456"]
+SEEDS = ["324234", "234234", "66756"]
 
 
 # {EXP { SEED {ALGO {PROCESSES [time]}}}}
@@ -36,8 +36,9 @@ def decode_output_and_save(output):
     seed = str(int(lines[2].split(": ")[1]))
 
     # get the run times for each of the algorithms
-    fftw_time = str(float(lines[4].split(" ")[1]))
     iterativeIcp_time = str(lines[5].split(": ")[1].split(" ")[0])
+    iterativeIcp_time = str(lines[5].split(": ")[1].split(" ")[0])
+    
 
     # read the rest of the data and check if any of the autovalidates failed
     failed = False
@@ -77,10 +78,10 @@ def main(total_reapeated_tests=5):
     json file and runs each version total_reapeated_tests times to be able to take the mean.
     """
     for run in range(total_reapeated_tests):
-        for threads in range(1, 9):
+        for processes in range(1, 9):
             for exp_size in range(10, 24):
                 for seed in SEEDS:
-                    output = run_test(exp_size, seed, threads)
+                    output = run_test(exp_size, seed, processes)
                     decode_output_and_save(output)
 
 

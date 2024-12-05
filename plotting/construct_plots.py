@@ -3,18 +3,39 @@ import matplotlib.pyplot as plt
 
 
 # TODO: change to compare against the icp serial instead of fftw
-#TODO: check distributive
+# TODO: check distributive
 PLOTS_DIR = "actual_plots"
 
-def comput
 
+def compute_means_serial():
+    with open("serial.json", "r") as f:
+        data = json.load(f)
+    # {EXP { SEED {ALGO [time]}}} -> {EXP {ALGO :time}}
 
+    # Create the new data structure
+    means = {}
+    for exp in data:
+        means[exp] = {}
+        for seed in data[exp]:
+            for algo in data[exp][seed]:
+                if algo not in means[exp]:
+                    means[exp][algo] = []
+
+                for value in data[exp][seed][algo]:
+                    means[exp][algo].append(float(value))
+
+    # Compute the means
+    for exp in means:
+        for algo in means[exp]:
+            means[exp][algo] = sum(means[exp][algo]) / len(means[exp][algo])
+
+    return means
 
 
 def compute_means_parallel():
     with open("parallel.json", "r") as f:
         data = json.load(f)
-    # {EXP { SEED {ALGO {THREADS [time]}}}} -> {EXP {ALGO {THREADS [time]}}}
+    # {EXP { SEED {ALGO {THREADS [time]}}}} -> {EXP {ALGO {THREADS :time}}}
 
     # Create the new data structure
     means = {}
@@ -68,8 +89,8 @@ def create_parallel_plots():
         plt.plot(
             list(map(float, means.keys())),
             [
-                means[exp]["iterativeIcp"][str(1)]
-                / means[exp]["iterativeIcp"][str(threads)]
+                means[exp]["iterativeIcp_Serial"][str(1)]
+                / means[exp]["iterativeIcp_multithreaded"][str(threads)]
                 for exp in means.keys()
             ],
             ".-",
@@ -82,30 +103,13 @@ def create_parallel_plots():
         plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{threads}.png")
         plt.close()
 
-        plt.plot(
-            list(map(float, means.keys())),
-            [
-                means[exp]["iterative"][str(1)]
-                / means[exp]["iterative"][str(threads)]
-                for exp in means.keys()
-            ],
-            ".-",
-            label=f"{threads} threads",
-        )
-        plt.xlabel("exp_size")
-        plt.ylabel("Speedup")
-        plt.title(f"Speedup by exp_size for {threads} threads")
-        plt.legend()
-        plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{threads}.png")
-        plt.close()
-
-
+        
 
 
 def compute_means_distributed():
     with open("distributed.json", "r") as f:
         data = json.load(f)
-    # {EXP { SEED {ALGO {PROCESSES [time]}}}} -> {EXP {ALGO {PROCESSES [time]}}}
+    # {EXP { SEED {ALGO {PROCESSES [time]}}}} -> {EXP {ALGO {PROCESSES :time}}}
 
     # Create the new data structure
     means = {}

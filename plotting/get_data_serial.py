@@ -4,7 +4,7 @@ import json
 import math
 
 
-SEEDS = ["324234", "234234", "66756", "85946", "87543095", "239576", "59456"]
+SEEDS = ["324234", "234234", "66756"]
 
 
 # {EXP { SEED {ALGO [TIME]}}}
@@ -70,7 +70,7 @@ def decode_output_and_save(output):
         json.dump(complete_data, f, indent=4)
 
 
-def main(total_reapeated_tests=5):
+def main(total_reapeated_tests=3):
     """Runs the test_serial program with the different sizes and seeds and saves the data to the 
     json file and runs each version total_reapeated_tests times to be able to take the mean."""
     for run in range(total_reapeated_tests):

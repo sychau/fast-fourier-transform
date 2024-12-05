@@ -48,15 +48,20 @@ int main(int argc, char* argv[]) {
     std::vector<double> samples = generateRandomVector(arraySize, 0.0, 10.0, seed);
     std::vector<std::complex<double>> complexSamples(samples.begin(), samples.end());
 
-    // Perform FFT and time it
 
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-	std::vector<std::complex<double>> fftwResult = expandFftwResult(fftwR2c(samples));
+    // IterativeIcpFFT and time it as the baseline serial
+	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+	std::vector<std::complex<double>> iterativeIcpFftResult = iterativeIcpFft(complexSamples, false);
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
     if (currProcId == 0) {
-	    std::cout << "fftw: " << duration << " microseconds\n";
+        std::cout << "iterativeIcpFft: " << duration << " microseconds\n";
     }
+
+    // Perform FFTW for validation
+	std::vector<std::complex<double>> fftwResult = expandFftwResult(fftwR2c(samples));
+    
+    // icpFftDistributed and time it
     t1 = std::chrono::high_resolution_clock::now();
 	std::vector<std::complex<double>> iterFftMpiRes = icpFftDistributed(complexSamples, false);
     t2 = std::chrono::high_resolution_clock::now();
@@ -74,5 +79,17 @@ int main(int argc, char* argv[]) {
             std::cout << "icpFftDistributed failed!\n";
         }
     }
+
+    // Verify result
+    if (currProcId == 0) {
+        if (validateFFT(fftwResult, iterativeIcpFftResult) == 0) {
+            std::cout << "iterativeIcpFft passed!\n";
+        } else {
+            std::cout << "iterativeIcpFft failed!\n";
+        }
+    }
+
+
+
 	MPI_Finalize();
 }
