@@ -42,8 +42,8 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
             int partnerProcId = partnerProcIdBits.to_ulong();
             // Exchange data with partner
             MPI_Sendrecv(
-                R.data() + startIdx, elePerProc, MPI_DOUBLE_COMPLEX, partnerProcId, m,
-                S.data() + partnerProcId * elePerProc, elePerProc, MPI_DOUBLE_COMPLEX, partnerProcId, m, MPI_COMM_WORLD, MPI_STATUS_IGNORE 
+                R.data() + startIdx, elePerProc, MPI_C_DOUBLE_COMPLEX, partnerProcId, m,
+                S.data() + partnerProcId * elePerProc, elePerProc, MPI_C_DOUBLE_COMPLEX, partnerProcId, m, MPI_COMM_WORLD, MPI_STATUS_IGNORE 
             );
         }
 
@@ -68,7 +68,7 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
     }
 
     // All processes gather result from other processes
-    MPI_Allgather(R.data() + startIdx, elePerProc, MPI_DOUBLE_COMPLEX, R.data(), elePerProc, MPI_DOUBLE_COMPLEX, MPI_COMM_WORLD);
+    MPI_Allgather(R.data() + startIdx, elePerProc, MPI_C_DOUBLE_COMPLEX, R.data(), elePerProc, MPI_C_DOUBLE_COMPLEX, MPI_COMM_WORLD);
 
     // In-place bit-reversal reordering
     for (int i = 0; i < n; ++i) {
