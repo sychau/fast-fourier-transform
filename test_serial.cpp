@@ -46,28 +46,28 @@ int main(int argc, char* argv[]){
 	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 	std::vector<std::complex<double>> fftwResult = expandFftwResult(fftwR2c(samples));
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-	std::cout << "fftw: " << duration << " milliseconds\n";
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+	std::cout << "fftw: " << duration << " microseconds\n";
 
 	t1 = std::chrono::high_resolution_clock::now();
     const std::complex<double> img(0.0, 1.0);
 	std::complex<double> omega = std::exp(-2.0 * img * std::numbers::pi / (double)arraySize);
 	std::vector<std::complex<double>> recursiveResult = recursiveFFT(samples, omega);
 	t2 = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-	std::cout << "recursiveFFT: " << duration << " milliseconds\n";
+	duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+	std::cout << "recursiveFFT: " << duration << " microseconds\n";
 	
 	t1 = std::chrono::high_resolution_clock::now();
 	std::vector<std::complex<double>> iterativeResult = iterativeFFT(complexSamples, false);
 	t2 = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-	std::cout << "iterativeFFT: " << duration << " milliseconds\n";
+	duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+	std::cout << "iterativeFFT: " << duration << " microseconds\n";
 
 	t1 = std::chrono::high_resolution_clock::now();
 	std::vector<std::complex<double>> iterativeIcpResult = iterativeIcpFft(complexSamples, false);
 	t2 = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-	std::cout << "iterativeIcpFft: " << duration << " milliseconds\n";
+	duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+	std::cout << "iterativeIcpFft: " << duration << " microseconds\n";
     std::cout << '\n';
 
 	// Verify result

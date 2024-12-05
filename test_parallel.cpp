@@ -52,14 +52,14 @@ int main(int argc, char* argv[]){
 	std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 	std::vector<std::complex<double>> fftwResult = expandFftwResult(fftwR2c(samples));
 	std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-	std::cout << "fftw: " << duration << " milliseconds\n";
+	auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+	std::cout << "fftw: " << duration << " microseconds\n";
 
 	t1 = std::chrono::high_resolution_clock::now();
 	std::vector<std::complex<double>> iterativeFftResult = multithreaded_iterativeIcpFft(complexSamples, false, nThreads);
 	t2 = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast<std::chrono::milliseconds>( t2 - t1 ).count();
-	std::cout << "multithreaded_iterativeIcpFft ("<< nThreads <<" threads): " << duration << " milliseconds\n";
+	duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+	std::cout << "multithreaded_iterativeIcpFft ("<< nThreads <<" threads): " << duration << " microseconds\n";
 	std::cout << '\n';
 	
 	// Verify result
