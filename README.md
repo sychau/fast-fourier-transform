@@ -48,7 +48,7 @@ Test the parallel implementation with multithreading. Specify the number of thre
 ```
 
 ### Run Distributed Test
-Test the distributed implementation using MPI. Specify the number of processes with `-n`
+Test the distributed implementation using MPI. Specify the number of processes with `-n`, n must be able to be represented as 2^x.
 ```bash
 mpirun -n 8 ./test_distributed --sizeExp 20 --seed 49
 ```
@@ -72,6 +72,8 @@ From there we can gather all of the necessary data as follows:
 ```bash
 python3 get_data_parallel.py
 ```
+If you want to overwrite the previous data instead of adding on top of it, just delete the parallel.json file before running the data script.
+
 Afterwhich we can generate plots by running the plot constructing scripts and selecting parallel plots as follows: 
 ```bash
 python3 construct_plots.py
@@ -88,8 +90,9 @@ From there we can gather all of the necessary data as follows:
 ```bash
 python3 get_data_distributed.py
 ```
-Afterwhich we can generate plots by running the plot constructing scripts and selecting parallel plots as follows: 
+If you want to overwrite the previous data instead of adding on top of it, just delete the distributed.json file before running the data script.
 
+Afterwhich we can generate plots by running the plot constructing scripts and selecting parallel plots as follows: 
 ```bash
 python3 construct_plots.py
 >>>Enter 1 for parallel plots, 2 for distributed plots: 2

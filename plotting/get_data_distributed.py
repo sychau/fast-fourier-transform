@@ -9,7 +9,7 @@ SEEDS = ["324234", "234234", "66756"]
 
 # {EXP { SEED {ALGO {PROCESSES [time]}}}}
 JSON_FILE = "distributed.json"
-if (not os.path.exists(JSON_FILE)):
+if not os.path.exists(JSON_FILE):
     with open(JSON_FILE, "w") as f:
         json.dump({}, f, indent=4)
 complete_data = json.load(open(JSON_FILE, "r"))
@@ -41,7 +41,6 @@ def decode_output_and_save(output):
     # get the run times for each of the algorithms
     iterativeIcp_time = str(lines[4].split(": ")[1].split(" ")[0])
     iterativeIcpDistributed_time = str(lines[5].split(": ")[1].split(" ")[0])
-    
 
     # read the rest of the data and check if any of the autovalidates failed
     failed = False
@@ -70,7 +69,9 @@ def decode_output_and_save(output):
 
     # Save the data
     complete_data[size][seed]["iterativeIcp"][threads].append(iterativeIcp_time)
-    complete_data[size][seed]["iterativeIcpDistributed"][threads].append(iterativeIcpDistributed_time)
+    complete_data[size][seed]["iterativeIcpDistributed"][threads].append(
+        iterativeIcpDistributed_time
+    )
 
     # Save the data to the json file incase of failure later we still have the data until this point
     with open(JSON_FILE, "w") as f:
@@ -82,12 +83,12 @@ def main(total_reapeated_tests=5):
     json file and runs each version total_reapeated_tests times to be able to take the mean.
     """
     for run in range(total_reapeated_tests):
-        for processes in range(1, 9):
-            for exp_size in range(10, 24):
+        for processes in [2**i for i in range(3)]:
+            for exp_size in range(4, 24):
                 for seed in SEEDS:
                     output = run_test(exp_size, seed, processes)
                     decode_output_and_save(output)
 
 
 if __name__ == "__main__":
-    main(1)
+    main(3)

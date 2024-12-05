@@ -136,7 +136,7 @@ def compute_means_distributed():
 
 
 def create_distributed_plots():
-    means = compute_means_parallel()
+    means = compute_means_distributed()
     # {EXP {ALGO {processes [mean_time]}}}
 
     # Create time by processes for exp_size plots
@@ -156,7 +156,7 @@ def create_distributed_plots():
         plt.close()
 
     # Create Speedup by exp_size for 1 to 8 processes
-    for processes in range(2, 9):
+    for processes in [2**i for i in range(3)]:
 
         plt.plot(
             list(map(float, means.keys())),
