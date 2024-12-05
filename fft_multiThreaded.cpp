@@ -4,8 +4,11 @@
 #include <barrier>
 #include <bitset>
 #include <iostream>
-#include <numbers>
 #include <thread>
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 
 void dft_thread_function(const std::vector<double> &X, std::vector<std::complex<double>> &Y, const int start_i, const int end_i, const int n,
                          const std::complex<double> omega) {
@@ -21,7 +24,7 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
     std::vector<std::complex<double>> Y(X.size());
 
     const std::complex<double> img(0.0, 1.0);
-    std::complex<double> omega = std::exp(-2.0 * img * std::numbers::pi / (double)n);
+    std::complex<double> omega = std::exp(-2.0 * img * M_PI / (double)n);
 
     std::vector<std::thread> threads;
     const int nThreads = std::thread::hardware_concurrency(); // This gets the amount of availble threads.
@@ -128,7 +131,7 @@ std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vecto
 
     const std::complex<double> img(0.0, 1.0);
     double exponentSign = isInverse ? 1.0 : -1.0;
-    std::complex<double> omega = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
+    std::complex<double> omega = std::exp(exponentSign * 2.0 * img * M_PI / (double)n);
 
     std::vector<std::complex<double>> R(X); // Result array
     std::vector<std::complex<double>> S(n); // Auxillary array to hold previous value of R

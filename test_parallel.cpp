@@ -7,7 +7,6 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
-#include <numbers>
 
 #define FUNC_NAME(x) x, #x
 #define DEFAULT_THREADS "1"

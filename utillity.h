@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <string_view>
-#include <numbers>
 #include <cmath>
 #include <iostream>
 #include <complex>
