@@ -2,7 +2,13 @@ import json
 import matplotlib.pyplot as plt
 
 
+# TODO: change to compare against the icp serial instead of fftw
+#TODO: check distributive
 PLOTS_DIR = "actual_plots"
+
+def comput
+
+
 
 
 def compute_means_parallel():
@@ -76,6 +82,25 @@ def create_parallel_plots():
         plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{threads}.png")
         plt.close()
 
+        plt.plot(
+            list(map(float, means.keys())),
+            [
+                means[exp]["iterative"][str(1)]
+                / means[exp]["iterative"][str(threads)]
+                for exp in means.keys()
+            ],
+            ".-",
+            label=f"{threads} threads",
+        )
+        plt.xlabel("exp_size")
+        plt.ylabel("Speedup")
+        plt.title(f"Speedup by exp_size for {threads} threads")
+        plt.legend()
+        plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{threads}.png")
+        plt.close()
+
+
+
 
 def compute_means_distributed():
     with open("distributed.json", "r") as f:
@@ -125,7 +150,7 @@ def create_distributed_plots():
         plt.ylabel("Time")
         plt.title(f"Execution Time by processes for exp_size = {exp}")
         plt.legend()
-        plt.savefig(f"{PLOTS_DIR}/parallel_exp_size_{exp}.png")
+        plt.savefig(f"{PLOTS_DIR}/distributed_exp_size_{exp}.png")
         plt.close()
 
     # Create Speedup by exp_size for 1 to 8 processes
@@ -145,7 +170,7 @@ def create_distributed_plots():
         plt.ylabel("Speedup")
         plt.title(f"Speedup by exp_size for {processes} processes")
         plt.legend()
-        plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{processes}.png")
+        plt.savefig(f"{PLOTS_DIR}/distributed_speedup_{processes}.png")
         plt.close()
 
 

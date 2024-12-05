@@ -38,10 +38,11 @@ def decode_output_and_save(output):
     # get the run times for each of the algorithms
     fftw_time = str(float(lines[4].split(" ")[1]))
     iterativeIcp_time = str(lines[5].split(": ")[1].split(" ")[0])
+    iterative_time = str(lines[6].split(": ")[1].split(" ")[0])
 
     # read the rest of the data and check if any of the autovalidates failed
     failed = False
-    for line in lines[6:]:
+    for line in lines[7:]:
         if "failed" in line:
             print(f"Failed: {line}")
             failed = True
@@ -59,14 +60,21 @@ def decode_output_and_save(output):
         complete_data[size][seed]["fftw"] = {}
     if "iterativeIcp" not in complete_data[size][seed]:
         complete_data[size][seed]["iterativeIcp"] = {}
+    if "iterative" not in complete_data[size][seed]:
+        complete_data[size][seed]["iterative"] = {}
+
+
     if threads not in complete_data[size][seed]["fftw"]:
         complete_data[size][seed]["fftw"][threads] = []
     if threads not in complete_data[size][seed]["iterativeIcp"]:
         complete_data[size][seed]["iterativeIcp"][threads] = []
+    if threads not in complete_data[size][seed]["iterative"]:
+        complete_data[size][seed]["iterative"][threads] = []
 
     # Save the data
     complete_data[size][seed]["fftw"][threads].append(fftw_time)
     complete_data[size][seed]["iterativeIcp"][threads].append(iterativeIcp_time)
+    complete_data[size][seed]["iterative"][threads].append(iterative_time)
 
     # Save the data to the json file incase of failure later we still have the data until this point
     with open(JSON_FILE, "w") as f:
@@ -79,11 +87,11 @@ def main(total_reapeated_tests=5):
     """
     for run in range(total_reapeated_tests):
         for threads in range(1, 9):  # TODO: change to go from 1 to 16
-            for exp_size in range(4, 24):
+            for exp_size in range(4, 18):
                 for seed in SEEDS:
                     output = run_test(exp_size, seed, threads)
                     decode_output_and_save(output)
 
 
 if __name__ == "__main__":
-    main(3)
+    main(2)
