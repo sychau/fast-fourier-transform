@@ -52,25 +52,43 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 
 std::atomic<int> iterativeIcpFft_covered_i(0);
 void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n, std::vector<std::complex<double>> &R,
-                                                        std::vector<std::complex<double>> &S, const std::complex<double> omega, std::barrier<> &b, int thread_id) {
+                                                        std::vector<std::complex<double>> &S, const std::complex<double> omega, std::barrier<> &b, int thread_id, int block_size) {
 
     int start_i;
-    int block_size = 1;
     int m;
     int i;
     unsigned int omegaExp;
 
 
+    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    auto barrier1_time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    auto barrier2_time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    auto thread_0_stuff = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    auto inner_loop = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    inner_loop = thread_0_stuff= barrier1_time = barrier2_time = 0;
+
+
     // Outer loop O(log n)
     for (m = 0; m < r; ++m) {
         if (thread_id == 0) {
+            t1= std::chrono::high_resolution_clock::now();
             std::copy(R.begin(), R.end(), S.begin());
             iterativeIcpFft_covered_i = 0;
+            t2 = std::chrono::high_resolution_clock::now();
+            thread_0_stuff += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
         }
 
+
+        t1 = std::chrono::high_resolution_clock::now();
         b.arrive_and_wait();
+        t2 = std::chrono::high_resolution_clock::now();
+        barrier1_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
 
         // Inner loop O(n)
+        t1 = std::chrono::high_resolution_clock::now();
+
         start_i = iterativeIcpFft_covered_i.fetch_add(block_size);
         while (start_i < n) {
             for (i = start_i; i < std::min(start_i + block_size, n); ++i) {
@@ -85,11 +103,25 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
             }
             start_i = iterativeIcpFft_covered_i.fetch_add(block_size);
         }
+
+        t2 = std::chrono::high_resolution_clock::now();
+        inner_loop += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+
+        t1 = std::chrono::high_resolution_clock::now();
         b.arrive_and_wait();
+        t2 = std::chrono::high_resolution_clock::now();
+        barrier2_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    }
+    //std::cout << "Thread " << thread_id << " barrier1_time: " << barrier1_time << " microseconds\n";
+    //std::cout << "Thread " << thread_id << " barrier2_time: " << barrier2_time << " microseconds\n";
+    //std::cout << "Thread " << thread_id << " inner_loop: " << inner_loop << " microseconds\n";
+    if (thread_id == 0) {
+        std::cout << "Thread 0 stuff: " << thread_0_stuff << " microseconds\n";
     }
 }
 
-std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads) {
+std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads, int block_size) {
     const int n = X.size();
     const int r = std::log2(n);
     std::barrier b(nThreads);
@@ -104,7 +136,7 @@ std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vecto
 
     std::vector<std::thread> threads;
     for (int i = 0; i < nThreads; ++i) {
-        threads.push_back(std::thread(multithreaded_iterativeIcpFft_innner_loop_function, r, n, std::ref(R), std::ref(S), omega, std::ref(b), i));
+        threads.push_back(std::thread(multithreaded_iterativeIcpFft_innner_loop_function, r, n, std::ref(R), std::ref(S), omega, std::ref(b), i, block_size));
     }
 
     for (auto &t : threads) {
