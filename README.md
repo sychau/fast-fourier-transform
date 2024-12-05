@@ -55,7 +55,9 @@ mpirun -n 8 ./test_distributed --sizeExp 20 --seed 49
 
 ### Requirements for creating plots
 Matplotlib must be installed to be able to create plots. This can be done with: 
-'''>>>pip3 install matplotlib'''
+'''bash
+>>>pip3 install matplotlib
+'''
 
 ### Create Parallel Plots
 To begin we can first navigate to the plotting directory from the build directory like so: 
