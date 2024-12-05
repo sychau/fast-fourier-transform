@@ -103,6 +103,26 @@ def create_parallel_plots():
         plt.savefig(f"{PLOTS_DIR}/parallel_speedup_{threads}.png")
         plt.close()
 
+        # Create Speedup by exp_size for 1 to 8 threads
+    for threads in range(2, 9):
+
+        plt.plot(
+            list(map(float, means.keys())),
+            [
+                means[exp]["iterativeIcp_Serial"][str(1)]
+                / means[exp]["iterativeIcp_multithreaded"][str(threads)]
+                for exp in means.keys()
+            ],
+            ".-",
+            label=f"{threads} threads",
+        )
+    plt.xlabel("exp_size")
+    plt.ylabel("Speedup")
+    plt.title(f"Speedup by exp_size for threads")
+    plt.legend()
+    plt.savefig(f"{PLOTS_DIR}/parallel_speedup_all_threads.png")
+    plt.close()
+
 
 def compute_means_distributed():
     with open("distributed.json", "r") as f:
