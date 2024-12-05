@@ -195,6 +195,27 @@ def create_distributed_plots():
         plt.savefig(f"{PLOTS_DIR}/distributed_speedup_{processes}.png")
         plt.close()
 
+    # Create Speedup by exp_size for 1 to 8 processes
+    for processes in [2**i for i in range(3)]:
+
+        plt.plot(
+            list(map(float, means.keys())),
+            [
+                means[exp]["iterativeIcp"][str(1)]
+                / means[exp]["iterativeIcpDistributed"][str(processes)]
+                for exp in means.keys()
+            ],
+            ".-",
+            label=f"{processes} processes",
+        )
+    plt.xlabel("exp_size")
+    plt.ylabel("Speedup")
+    plt.title(f"Speedup by exp_size for {processes} processes")
+    plt.legend()
+    plt.savefig(f"{PLOTS_DIR}/distributed_speedup_all_processes.png")
+    plt.close()
+
+
 
 if __name__ == "__main__":
     x = input("Enter 1 for parallel plots, 2 for distributed plots: ")
