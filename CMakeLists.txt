@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Use mpic++ wrapper
 set(MPI_COMPILER mpic++)
-set(CMAKE_CXX_FLAGS "-O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 # Find MPI (ensures that MPI is configured correctly)
 find_package(MPI REQUIRED)

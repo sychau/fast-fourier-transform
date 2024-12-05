@@ -1,16 +1,15 @@
-#ifndef FFT_DISTRIBUTED
-#define FFT_DISTRIBUTED
+#ifndef FFT_DISTRIBUTED_H
+#define FFT_DISTRIBUTED_H
+
+#include "utillity.h"
+#include "fft_serial.h"
 
 #include <vector>
 #include <complex>
 #include <bitset>
 #include <mpi.h>
 #include <format>
-#include "utillity.h"
 
 std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::complex<double>> &X, bool isInverse);
-bool isPowerOfTwo(unsigned int i);
-unsigned int reverseBits (unsigned int num, int len);
-unsigned int getFirstNBits (unsigned int num, int n);
 
-#endif // FFT_DISTRIBUTED
+#endif // FFT_DISTRIBUTED_H

@@ -1,4 +1,7 @@
 #include "fft_distributed.h"
+#include "core/get_time.h"
+
+#include <unordered_map>
 
 // Distributed version of the iterative fast fourier transform from ICP
 // This function could perform FFT or IFFT, determined by isInverse
@@ -18,22 +21,23 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
 
 	const std::complex<double> img(0.0, 1.0);
 	double exponentSign = isInverse ? 1.0 : -1.0;
-	std::complex<double> omega = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
+	std::complex<double> omegaBase = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
 
 	std::vector<std::complex<double>> R(n); // Result array
     std::copy(X.begin() + startIdx, X.begin() + endIdx, R.begin() + startIdx);
 
     std::vector<std::complex<double>> S(n); // Auxillary array to hold previous value of R
     std::copy(R.begin() + startIdx, R.begin() + endIdx, S.begin() + startIdx);
+    
+    std::unordered_map<int, std::complex<double>> omegaCache; // Store previously calculated omega
 
 	// Outer loop O(log n), m represent stage
     for (int m = 0; m < r; ++m) {
-        // CHeck if data exchange is needed before calculation
+        // Check if data exchange is needed at this stage
         if (m < (logP)) {
             std::bitset<32> partnerProcIdBits(currProcId);
             partnerProcIdBits.flip(logP - m - 1);
             int partnerProcId = partnerProcIdBits.to_ulong();
-
             // Exchange data with partner
             MPI_Sendrecv(
                 R.data() + startIdx, elePerProc, MPI_DOUBLE_COMPLEX, partnerProcId, m,
@@ -43,16 +47,21 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
 
         // Inner loop O(n)
 		for (int i = startIdx; i < endIdx; ++i) {
-			// Let (b_0 b_1 ... b_r-1) be the binary representation of i 
-			std::bitset<32> j(i);
-			j.reset(r - 1 - m); // (b_0 ... b_m−1 0 b_m+1 ... b_r−1)
-			std::bitset<32> k(i); 
-			k.set(r - 1 - m); // (b_0 ... b_m−1 1 b_m+1 ... b_r−1)
+			// // Let (b_0 b_1 ... b_r-1) be the binary representation of i 
+            unsigned int j = i & ~(1 << (r - 1 - m)); // Clear the bit, j:= (b_0 ... b_m−1 0 b_m+1 ... b_r−1)
+            unsigned int k = i | (1 << (r - 1 - m));  // Set the bit, k:= (b_0 ... b_m−1 1 b_m+1 ... b_r−1)
 
 			unsigned int omegaExp = getFirstNBits(reverseBits(i, r), m + 1) << (r - 1 - m); // (b_m b_m-1 ... b-0 ... 0 ... 0)
-			R[i] = S[j.to_ulong()] + S[k.to_ulong()] * std::pow(omega, omegaExp);
+            std::complex<double> omega;
+            if (omegaCache.find(omegaExp) != omegaCache.end()) {
+                omega = omegaCache[omegaExp];
+            } else {
+                omega = std::pow(omegaBase, omegaExp);
+                omegaCache[omegaExp] = omega;
+            }
+            R[i] = S[j] + S[k] * omega;
 		}
-        // Update S with newly calculated values
+        // Update S with new values
         std::copy(R.begin() + startIdx, R.begin() + endIdx, S.begin() + startIdx);
     }
 
@@ -76,24 +85,3 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
 
     return R;
 }
-
-// Check if a number is power of 2
-bool isPowerOfTwo(unsigned int i) {
-    return std::bitset<32>(i).count() == 1;
-}
-
-// Reverse bits of num
-unsigned int reverseBits (unsigned int num, int len) {
-    unsigned int reversed = 0;
-    for (int i = 0; i < len; ++i) {
-        unsigned int bit = (num >> i) & 1;
-        reversed = (reversed << 1) | bit;
-    }
-    return reversed;
-};
-
-// Extract the first N bits
-unsigned int getFirstNBits (unsigned int num, int n) {
-    unsigned int mask = (1U << n) - 1;
-    return num & mask;  
-};
