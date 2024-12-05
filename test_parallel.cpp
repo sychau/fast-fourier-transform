@@ -56,18 +56,40 @@ int main(int argc, char* argv[]){
 	std::cout << "fftw: " << duration << " microseconds\n";
 
 	t1 = std::chrono::high_resolution_clock::now();
-	std::vector<std::complex<double>> iterativeFftResult = multithreaded_iterativeIcpFft(complexSamples, false, nThreads);
+	std::vector<std::complex<double>> iterativeIcpFftResult = multithreaded_iterativeIcpFft(complexSamples, false, nThreads);
 	t2 = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
 	std::cout << "multithreaded_iterativeIcpFft ("<< nThreads <<" threads): " << duration << " microseconds\n";
-	std::cout << '\n';
+
+	
+		t1 = std::chrono::high_resolution_clock::now();
+		std::vector<std::complex<double>> iterativeFftResult = multithreaded_iterativeFFT(complexSamples, false, nThreads);
+		t2 = std::chrono::high_resolution_clock::now();
+		duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+		std::cout << "multithreaded_iterativeFFT ("<< nThreads <<" threads): " << duration << " microseconds\n";
+		std::cout << '\n';
+
+		
+
+	
+
 	
 	// Verify result
-	if (validateFFT(fftwResult, iterativeFftResult) == 0) {
+	if (validateFFT(fftwResult, iterativeIcpFftResult) == 0) {
 		std::cout << "multithreaded_iterativeIcpFft passed!\n";
 	} else {
 		std::cout << "multithreaded_iterativeIcpFft failed!\n";
 	}
+
+	
+// Verify result
+		if (validateFFT(fftwResult, iterativeFftResult) == 0) {
+			std::cout << "multithreaded_iterativeFFT passed!\n";
+		} else {
+			std::cout << "multithreaded_iterativeFFT failed!\n";
+		}
+
+
 
     return 0;
 }

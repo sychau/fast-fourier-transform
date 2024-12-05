@@ -16,6 +16,7 @@ void dft_thread_function(const std::vector<double> &X, std::vector<std::complex<
         }
     }
 }
+
 std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<double> &X) {
     const int n = X.size();
     std::vector<std::complex<double>> Y(X.size());
@@ -51,14 +52,13 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 }
 
 std::atomic<int> iterativeIcpFft_covered_i(0);
-void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n, std::vector<std::complex<double>> &R,
-                                                        std::vector<std::complex<double>> &S, const std::complex<double> omega, std::barrier<> &b, int thread_id, int block_size) {
+void multithreaded_iterativeIcpFft_loop_function(const int r, const int n, std::vector<std::complex<double>> &R, std::vector<std::complex<double>> &S,
+                                                 const std::complex<double> omega, std::barrier<> &b, int thread_id, int block_size) {
 
     int start_i;
     int m;
     int i;
     unsigned int omegaExp;
-
 
     std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
@@ -66,25 +66,22 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
     auto barrier2_time = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     auto thread_0_stuff = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     auto inner_loop = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    inner_loop = thread_0_stuff= barrier1_time = barrier2_time = 0;
-
+    inner_loop = thread_0_stuff = barrier1_time = barrier2_time = 0;
 
     // Outer loop O(log n)
     for (m = 0; m < r; ++m) {
         if (thread_id == 0) {
-            t1= std::chrono::high_resolution_clock::now();
+            t1 = std::chrono::high_resolution_clock::now();
             std::copy(R.begin(), R.end(), S.begin());
             iterativeIcpFft_covered_i = 0;
             t2 = std::chrono::high_resolution_clock::now();
             thread_0_stuff += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
         }
 
-
         t1 = std::chrono::high_resolution_clock::now();
         b.arrive_and_wait();
         t2 = std::chrono::high_resolution_clock::now();
         barrier1_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-
 
         // Inner loop O(n)
         t1 = std::chrono::high_resolution_clock::now();
@@ -107,18 +104,17 @@ void multithreaded_iterativeIcpFft_innner_loop_function(const int r, const int n
         t2 = std::chrono::high_resolution_clock::now();
         inner_loop += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-
         t1 = std::chrono::high_resolution_clock::now();
         b.arrive_and_wait();
         t2 = std::chrono::high_resolution_clock::now();
         barrier2_time += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
     }
-    //std::cout << "Thread " << thread_id << " barrier1_time: " << barrier1_time << " microseconds\n";
-    //std::cout << "Thread " << thread_id << " barrier2_time: " << barrier2_time << " microseconds\n";
-    //std::cout << "Thread " << thread_id << " inner_loop: " << inner_loop << " microseconds\n";
-    // if (thread_id == 0) {
-    //     std::cout << "Thread 0 stuff: " << thread_0_stuff << " microseconds\n";
-    // }
+    // std::cout << "Thread " << thread_id << " barrier1_time: " << barrier1_time << " microseconds\n";
+    // std::cout << "Thread " << thread_id << " barrier2_time: " << barrier2_time << " microseconds\n";
+    // std::cout << "Thread " << thread_id << " inner_loop: " << inner_loop << " microseconds\n";
+    //  if (thread_id == 0) {
+    //      std::cout << "Thread 0 stuff: " << thread_0_stuff << " microseconds\n";
+    //  }
 }
 
 std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads, int block_size) {
@@ -133,10 +129,9 @@ std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vecto
     std::vector<std::complex<double>> R(X); // Result array
     std::vector<std::complex<double>> S(n); // Auxillary array to hold previous value of R
 
-
     std::vector<std::thread> threads;
     for (int i = 0; i < nThreads; ++i) {
-        threads.push_back(std::thread(multithreaded_iterativeIcpFft_innner_loop_function, r, n, std::ref(R), std::ref(S), omega, std::ref(b), i, block_size));
+        threads.push_back(std::thread(multithreaded_iterativeIcpFft_loop_function, r, n, std::ref(R), std::ref(S), omega, std::ref(b), i, block_size));
     }
 
     for (auto &t : threads) {
@@ -159,4 +154,75 @@ std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vecto
     }
 
     return R;
+}
+
+std::atomic<int> iterativeFft_covered_j(0);
+void multithreaded_iterativeFft_loop_function(const int r, double exponentSign, const int n, std::vector<std::complex<double>> &Y, std::barrier<> &b,
+                                              int thread_id) {
+    int s, m, k, j;
+    std::complex<double> omegaM, omega, t, u;
+    const std::complex<double> img(0.0, 1.0);
+    int block_size = 1 << 0;
+
+    for (int s = 1; s <= r; ++s) {
+
+        m = 1 << s;
+
+        std::complex<double> omegaM = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)m);
+
+        if (thread_id == 0) {
+            iterativeFft_covered_j.store(0);
+        }
+        b.arrive_and_wait();
+
+        int start_k = iterativeFft_covered_j.fetch_add(m * block_size);
+        while (start_k < n) {
+            for (k = start_k; k < std::min(start_k + m * block_size, n); k += m) {
+                for (j = 0; j < m / 2; ++j) {
+                    omega = std::pow(omegaM, j);
+                    std::complex<double> t = omega * Y[k + j + m / 2];
+                    std::complex<double> u = Y[k + j];
+                    Y[k + j] = u + t;
+                    Y[k + j + m / 2] = u - t;
+                }
+            }
+
+            start_k = iterativeFft_covered_j.fetch_add(m * block_size);
+        }
+
+        b.arrive_and_wait();
+    }
+}
+
+std::vector<std::complex<double>> multithreaded_iterativeFFT(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads) {
+    const int n = X.size();
+    const int r = std::log2(n); // number of bits to represent n
+
+    double exponentSign = isInverse ? 1.0 : -1.0;
+    const std::complex<double> img(0.0, 1.0);
+
+    // Use bit reversal order
+    std::vector<std::complex<double>> Y(n);
+    for (int i = 0; i < n; ++i) {
+        Y[reverseBits(i, r)] = X[i];
+    }
+
+    std::vector<std::thread> threads;
+    std::barrier b(nThreads);
+    for (int i = 0; i < nThreads; ++i) {
+        threads.push_back(std::thread(multithreaded_iterativeFft_loop_function, r, exponentSign, n, std::ref(Y), std::ref(b), i));
+    }
+
+    for (auto &t : threads) {
+        t.join();
+    }
+
+    // Normalize result if performing IFFT
+    if (isInverse) {
+        for (int i = 0; i < n; ++i) {
+            Y[i] /= n;
+        }
+    }
+
+    return Y;
 }
