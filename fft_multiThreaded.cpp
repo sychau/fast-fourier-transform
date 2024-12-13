@@ -1,11 +1,11 @@
 #include "fft_multiThreaded.h"
 #include "utillity.h"
 #include <atomic>
-#include <barrier>
 #include <bitset>
 #include <iostream>
-#include <numbers>
 #include <thread>
+
+constexpr double PI = 3.14159265358;
 
 void dft_thread_function(const std::vector<double> &X, std::vector<std::complex<double>> &Y, const int start_i, const int end_i, const int n,
                          const std::complex<double> omega) {
@@ -22,7 +22,7 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
     std::vector<std::complex<double>> Y(X.size());
 
     const std::complex<double> img(0.0, 1.0);
-    std::complex<double> omega = std::exp(-2.0 * img * std::numbers::pi / (double)n);
+    std::complex<double> omega = std::exp(-2.0 * img * PI / (double)n);
 
     std::vector<std::thread> threads;
     const int nThreads = std::thread::hardware_concurrency(); // This gets the amount of availble threads.
@@ -53,7 +53,7 @@ std::vector<std::complex<double>> naiveDFT_multiThreaded(const std::vector<doubl
 
 std::atomic<int> iterativeIcpFft_covered_i(0);
 void multithreaded_iterativeIcpFft_loop_function(const int r, const int n, std::vector<std::complex<double>> &R, std::vector<std::complex<double>> &S,
-                                                 const std::complex<double> omega, std::barrier<> &b, int thread_id, int block_size) {
+                                                 const std::complex<double> omega, CustomBarrier &b, int thread_id, int block_size) {
 
     int start_i;
     int m;
@@ -67,7 +67,7 @@ void multithreaded_iterativeIcpFft_loop_function(const int r, const int n, std::
             iterativeIcpFft_covered_i = 0;
         }
 
-        b.arrive_and_wait();
+        b.wait();
 
         // Inner loop O(n)
         start_i = iterativeIcpFft_covered_i.fetch_add(block_size);
@@ -86,7 +86,7 @@ void multithreaded_iterativeIcpFft_loop_function(const int r, const int n, std::
         }
 
 
-        b.arrive_and_wait();
+        b.wait();
 
     }
 }
@@ -94,11 +94,11 @@ void multithreaded_iterativeIcpFft_loop_function(const int r, const int n, std::
 std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vector<std::complex<double>> &X, bool isInverse, int nThreads, int block_size) {
     const int n = X.size();
     const int r = std::log2(n);
-    std::barrier b(nThreads);
+    CustomBarrier b{nThreads};
 
     const std::complex<double> img(0.0, 1.0);
     double exponentSign = isInverse ? 1.0 : -1.0;
-    std::complex<double> omega = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
+    std::complex<double> omega = std::exp(exponentSign * 2.0 * img * PI / (double)n);
 
     std::vector<std::complex<double>> R(X); // Result array
     std::vector<std::complex<double>> S(n); // Auxillary array to hold previous value of R
@@ -131,7 +131,7 @@ std::vector<std::complex<double>> multithreaded_iterativeIcpFft(const std::vecto
 }
 
 std::atomic<int> iterativeFft_covered_j(0);
-void multithreaded_iterativeFft_loop_function(const int r, double exponentSign, const int n, std::vector<std::complex<double>> &Y, std::barrier<> &b,
+void multithreaded_iterativeFft_loop_function(const int r, double exponentSign, const int n, std::vector<std::complex<double>> &Y, CustomBarrier &b,
                                               int thread_id) {
     int s, m, k, j;
     std::complex<double> omegaM, omega, t, u;
@@ -143,12 +143,12 @@ void multithreaded_iterativeFft_loop_function(const int r, double exponentSign, 
 
         m = 1 << s;
 
-        std::complex<double> omegaM = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)m);
+        std::complex<double> omegaM = std::exp(exponentSign * 2.0 * img * PI / (double)m);
 
         if (thread_id == 0) {
             iterativeFft_covered_j.store(0);
         }
-        b.arrive_and_wait();
+        b.wait();
 
         int start_k = iterativeFft_covered_j.fetch_add(m * block_size);
         while (start_k < n) {
@@ -165,7 +165,7 @@ void multithreaded_iterativeFft_loop_function(const int r, double exponentSign, 
             start_k = iterativeFft_covered_j.fetch_add(m * block_size);
         }
 
-        b.arrive_and_wait();
+        b.wait();
     }
 }
 
@@ -183,7 +183,7 @@ std::vector<std::complex<double>> multithreaded_iterativeFFT(const std::vector<s
     }
 
     std::vector<std::thread> threads(nThreads);
-    std::barrier b(nThreads);
+    CustomBarrier b{nThreads};
     for (int i = 0; i < nThreads; ++i) {
         threads[i] = std::thread(multithreaded_iterativeFft_loop_function, r, exponentSign, n, std::ref(Y), std::ref(b), i);
     }

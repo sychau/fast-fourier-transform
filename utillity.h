@@ -3,12 +3,10 @@
 
 #include <vector>
 #include <string_view>
-#include <numbers>
 #include <cmath>
 #include <iostream>
 #include <complex>
 #include <random>
-#include <format>
 #include <bitset>
 
 // Return sample points of a sin wave

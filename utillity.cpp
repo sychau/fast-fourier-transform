@@ -2,6 +2,7 @@
 
 #define VALIDATE_EPSILON "1e-12"
 
+constexpr double PI = 3.14159265358;
 
 std::vector<double> sampleSin(const int N, const double freq) {
     double samplingRate = N;
@@ -9,7 +10,7 @@ std::vector<double> sampleSin(const int N, const double freq) {
     std::vector<double> samples(N);    
     for (int i = 0; i < N; ++i) {
         double t = i / samplingRate;
-        samples[i] = std::sin(2 * std::numbers::pi * freq * t);
+        samples[i] = std::sin(2 * PI * freq * t);
     }
     return samples;
 }

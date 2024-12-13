@@ -5,13 +5,13 @@
 #include <vector>
 #include <cmath>
 #include <complex>
-#include <numbers>
 #include <string>
 #include <bitset>
 #include <iomanip>
-#include <format>
 #include <fftw3.h>
 #include <map>
+
+constexpr double PI = 3.14159265358;
 
 // IPC Ch.13
 // O(n^2)
@@ -20,7 +20,7 @@ std::vector<std::complex<double>> naiveDFT(const std::vector<double> &X) {
     std::vector<std::complex<double>> Y(X.size());
 
 	const std::complex<double> img(0.0, 1.0);
-	std::complex<double> omega = std::exp(-2.0 * img * std::numbers::pi / (double)n);
+	std::complex<double> omega = std::exp(-2.0 * img * PI / (double)n);
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             Y[i] += X[j] * std::pow(omega, i * j);
@@ -76,7 +76,7 @@ std::vector<std::complex<double>> iterativeFFT(const std::vector<std::complex<do
 
 	for (int s = 1; s <= r; ++s) {
 		int m = 1 << s;
-		std::complex<double> omegaM = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)m);
+		std::complex<double> omegaM = std::exp(exponentSign * 2.0 * img * PI / (double)m);
 
 		for (int k = 0; k < n; k += m) {
 			std::complex<double> omega = 1.0;
@@ -107,7 +107,7 @@ std::vector<std::complex<double>> iterativeIcpFft(const std::vector<std::complex
 
 	const std::complex<double> img(0.0, 1.0);
 	double exponentSign = isInverse ? 1.0 : -1.0;
-	std::complex<double> omegaBase = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
+	std::complex<double> omegaBase = std::exp(exponentSign * 2.0 * img * PI / (double)n);
 
 	std::vector<std::complex<double>> R(X); // Result array
     std::vector<std::complex<double>> S(R); // Auxillary array to hold previous value of R

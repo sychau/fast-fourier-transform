@@ -7,7 +7,6 @@
 #include <chrono>
 #include <thread>
 #include <iomanip>
-#include <numbers>
 
 #define FUNC_NAME(x) x, #x
 #define DEFAULT_THREADS "1"
@@ -35,9 +34,9 @@ int main(int argc, char* argv[]){
     uint seed = cl_options["seed"].as<uint>();
 
     // Print information
-	std::cout << std::format("Number of threads: {}\n", nThreads);
-	std::cout << std::format("Array size: {}\n", arraySize);
-	std::cout << std::format("Seed: {}\n", seed);
+	std::cout << "Number of threads: " << nThreads << '\n';
+	std::cout << "Array size: " << arraySize << '\n';
+	std::cout << "Seed: " << seed << '\n';
 	std::cout << "\n";
 
 	if (!isPowerOfTwo(arraySize) || nThreads <= 0 || arraySize < nThreads) {

@@ -3,6 +3,8 @@
 
 #include <unordered_map>
 
+constexpr double PI = 3.14159265358;
+
 // Distributed version of the iterative fast fourier transform from ICP
 // This function could perform FFT or IFFT, determined by isInverse
 // Precondition: size of X and number of processes are power of 2, size of X >= number of processes
@@ -23,7 +25,7 @@ std::vector<std::complex<double>> icpFftDistributed(const std::vector<std::compl
 
 	const std::complex<double> img(0.0, 1.0);
 	double exponentSign = isInverse ? 1.0 : -1.0;
-	std::complex<double> omegaBase = std::exp(exponentSign * 2.0 * img * std::numbers::pi / (double)n);
+	std::complex<double> omegaBase = std::exp(exponentSign * 2.0 * img * PI / (double)n);
 
 	std::vector<std::complex<double>> R(n); // Result array
     std::copy(X.begin() + startIdx, X.begin() + endIdx, R.begin() + startIdx);

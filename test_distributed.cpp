@@ -34,9 +34,9 @@ int main(int argc, char* argv[]) {
 
     // Print information
     if (currProcId == 0) {
-        std::cout << std::format("Number of processes: {}\n", processes);
-        std::cout << std::format("Array size: {}\n", arraySize);
-        std::cout << std::format("Seed: {}\n", seed);
+        std::cout << "Number of processes: " << processes << '\n';
+        std::cout << "Array size: " << arraySize << '\n';
+        std::cout << "Seed: " << seed << '\n';
         std::cout << "\n";
         if (!isPowerOfTwo(processes) || arraySize < processes) {
             std::cout << "Incorrect input size or number of processes\n";

@@ -48,9 +48,9 @@ Test the parallel implementation with multithreading. Specify the number of thre
 ```
 
 ### Run Distributed Test
-Test the distributed implementation using MPI. Specify the number of processes with `-n`, n must be able to be represented as 2^x.
+Test the distributed implementation using MPI. Specify the number of processes with `-n`, n must be able to be represented as 2^x. Must have atleast n core in your CPU.
 ```bash
-mpirun -n 8 ./test_distributed --sizeExp 20 --seed 49
+mpirun -n 4 ./test_distributed --sizeExp 20 --seed 49
 ```
 
 
