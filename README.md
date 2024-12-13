@@ -8,7 +8,7 @@ The following dependencies are required to build and run the project:
 - **openMPI**  
 - **cmake ver3.20**  
 - **make**  
-- **g++10**  
+- **g++13**  
 - **fftw3** (used to verify the results of our algorithm)  
 
 ### Installing fftw3 on Ubuntu  
